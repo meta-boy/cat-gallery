@@ -1,4 +1,6 @@
+import 'package:cat_gallery/models.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -48,10 +50,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<String>> _getData() async {
+  Future<List<CatsResponse>> _getData() async {
     await Future<void>.delayed(const Duration(seconds: 1));
-    return List.generate(30, (index) => "https://cdn.pixabay.com/photo/2014/11/30/14/11/cat-551554__340.jpg");
+    return List.generate(30, (index) => CatsResponse(
+          url: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-845712410.jpg',
+          title: 'Cute Cat $index',
+        ));
   }
+
+  // Future<List<CatsResponse>> _getData() async {
+  //   const String url = "https://gist.githubusercontent.com/meta-boy/4a61ac4d344e9c8cd47066d15151bdba/raw/0f58709d6cfcc52f433d21b5a953c8947c0c7ce6/cats.json";
+  //   final http.Response response = await http.get(Uri.parse(url));
+  //   return catsResponseFromJson(response.body);
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
         // in the middle of the parent.
         child: FutureBuilder(builder: ((context, snapshot) {
           return snapshot.hasData ? ListView.builder(
-            itemCount: (snapshot.data as List<String>).length,
+            itemCount: (snapshot.data as List<CatsResponse>).length,
             itemBuilder: (context, index) {
-              return Image.network((snapshot.data as List<String>)[index]);
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.network(((snapshot.data as List<CatsResponse>)[index]).url ?? 'https://media.istockphoto.com/vectors/error-page-or-file-not-found-icon-vector-id924949200'),
+              );
             },
           ) : const CircularProgressIndicator();
         }), future: _getData(),),
